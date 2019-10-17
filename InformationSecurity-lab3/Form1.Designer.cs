@@ -39,6 +39,8 @@
             this.btnSaveTextToFile = new System.Windows.Forms.Button();
             this.btnSaveImage = new System.Windows.Forms.Button();
             this.label1 = new System.Windows.Forms.Label();
+            this.backgroundWorker = new System.ComponentModel.BackgroundWorker();
+            this.progressBar = new System.Windows.Forms.ProgressBar();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox)).BeginInit();
             this.SuspendLayout();
             // 
@@ -99,11 +101,14 @@
             "2",
             "3",
             "4",
-            "5"});
+            "5",
+            "6",
+            "7"});
             this.cmbbxBits.Location = new System.Drawing.Point(333, 231);
             this.cmbbxBits.Name = "cmbbxBits";
             this.cmbbxBits.Size = new System.Drawing.Size(121, 21);
             this.cmbbxBits.TabIndex = 5;
+            this.cmbbxBits.SelectedIndexChanged += new System.EventHandler(this.cmbbxBits_SelectedIndexChanged);
             // 
             // btnDistortImage
             // 
@@ -152,11 +157,26 @@
             this.label1.TabIndex = 10;
             this.label1.Text = "Количество младших разрядов";
             // 
+            // backgroundWorker
+            // 
+            this.backgroundWorker.DoWork += new System.ComponentModel.DoWorkEventHandler(this.backgroundWorker_DoWork);
+            this.backgroundWorker.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(this.backgroundWorker_RunWorkerCompleted);
+            // 
+            // progressBar
+            // 
+            this.progressBar.ForeColor = System.Drawing.SystemColors.HotTrack;
+            this.progressBar.Location = new System.Drawing.Point(45, 274);
+            this.progressBar.Name = "progressBar";
+            this.progressBar.Size = new System.Drawing.Size(239, 23);
+            this.progressBar.Style = System.Windows.Forms.ProgressBarStyle.Marquee;
+            this.progressBar.TabIndex = 11;
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(800, 450);
+            this.Controls.Add(this.progressBar);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.btnSaveImage);
             this.Controls.Add(this.btnSaveTextToFile);
@@ -189,6 +209,8 @@
         private System.Windows.Forms.Button btnSaveTextToFile;
         private System.Windows.Forms.Button btnSaveImage;
         private System.Windows.Forms.Label label1;
+        private System.ComponentModel.BackgroundWorker backgroundWorker;
+        private System.Windows.Forms.ProgressBar progressBar;
     }
 }
 

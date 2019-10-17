@@ -17,6 +17,8 @@ namespace InformationSecurity_lab3
         public Form1()
         {
             InitializeComponent();
+            cmbbxBits.SelectedItem = cmbbxBits.Items[0];
+            progressBar.Visible = false;
         }
 
         private void btnLoadTextFromFile_Click(object sender, EventArgs e)
@@ -68,16 +70,54 @@ namespace InformationSecurity_lab3
             var fs = File.Create(fileName);
             pictureBox.Image.Save(fs, ImageFormat.Bmp);
             MessageBox.Show($"Файл {fileName} успешно сохранен");
+            fs.Close();
         }
 
         private void btnHideTextIntoImage_Click(object sender, EventArgs e)
         {
-            var bitmap = pictureBox.Image as Bitmap;
-
-            if (bitmap != null)
+            _bitmap = pictureBox.Image as Bitmap;
+            
+            if (_bitmap != null)
             {
-                MessageBox.Show(bitmap.Width + "x" + bitmap.Height);
+                if(backgroundWorker.IsBusy != true)
+                {
+                    progressBar.Visible = true;
+                    progressBar.MarqueeAnimationSpeed = 50;
+                    backgroundWorker.RunWorkerAsync();
+                }
             }
+            else
+            {
+                MessageBox.Show("Сначала загрузите изображение");
+            }
+        }
+
+        private int _hiddenBits;
+        private Bitmap _bitmap;
+        private int _lowBits;
+
+        private void backgroundWorker_DoWork(object sender, DoWorkEventArgs e)
+        {            
+            _hiddenBits = Steganography.HideTextIntoImage(txtbxInputOutput.Text, ref _bitmap,_lowBits);
+        }      
+
+        private void backgroundWorker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
+        {
+            if (_hiddenBits >= 0)
+            {
+                MessageBox.Show($"Успешно спрятано {_hiddenBits} бит");
+                pictureBox.Image = _bitmap;
+                progressBar.Visible = false;
+            }
+            else
+            {
+                MessageBox.Show($"Ошибка в данных:\n1. Проверьте введенный текст\n2. Проверьте изображение");
+            }
+        }
+
+        private void cmbbxBits_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            _lowBits = int.Parse(cmbbxBits.SelectedItem.ToString());
         }
     }
 }
