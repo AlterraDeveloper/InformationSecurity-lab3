@@ -7,6 +7,7 @@ using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
@@ -27,7 +28,7 @@ namespace InformationSecurity_lab3
 
             if (explorer.ShowDialog() == DialogResult.OK)
             {
-                var textFromFile = File.ReadAllText(explorer.FileName, Encoding.Default);
+                var textFromFile = File.ReadAllText(explorer.FileName, Encoding.UTF8);
 
                 txtbxInputOutput.Text = textFromFile;
             }
@@ -39,7 +40,7 @@ namespace InformationSecurity_lab3
 
             if (explorer.ShowDialog() == DialogResult.OK)
             {
-                File.WriteAllText(explorer.FileName, txtbxInputOutput.Text);
+                File.WriteAllText(explorer.FileName, txtbxInputOutput.Text, Encoding.UTF8);
 
                 MessageBox.Show($"Файл {explorer.FileName}  успешно сохранен!", "Success", MessageBoxButtons.OK);
 
@@ -66,23 +67,21 @@ namespace InformationSecurity_lab3
 
         private void btnSaveImage_Click(object sender, EventArgs e)
         {
-            var fileName = "container-" + DateTime.Now.Ticks + ".bmp";
-            var fs = File.Create(fileName);
-            pictureBox.Image.Save(fs, ImageFormat.Bmp);
+            var fileName = "container-" + DateTime.Now.Ticks;
+            pictureBox.Image.Save(Path.ChangeExtension(fileName, ".bmp"), ImageFormat.Bmp);
             MessageBox.Show($"Файл {fileName} успешно сохранен");
-            fs.Close();
         }
 
         private void btnHideTextIntoImage_Click(object sender, EventArgs e)
         {
             _bitmap = pictureBox.Image as Bitmap;
-            
+
             if (_bitmap != null)
             {
-                if(backgroundWorker.IsBusy != true)
+                if (backgroundWorker.IsBusy != true)
                 {
                     progressBar.Visible = true;
-                    progressBar.MarqueeAnimationSpeed = 50;
+                    progressBar.MarqueeAnimationSpeed = 30;
                     backgroundWorker.RunWorkerAsync();
                 }
             }
@@ -97,17 +96,17 @@ namespace InformationSecurity_lab3
         private int _lowBits;
 
         private void backgroundWorker_DoWork(object sender, DoWorkEventArgs e)
-        {            
-            _hiddenBits = Steganography.HideTextIntoImage(txtbxInputOutput.Text, ref _bitmap,_lowBits);
-        }      
+        {
+            _hiddenBits = Steganography.HideTextIntoImage(txtbxInputOutput.Text, ref _bitmap, _lowBits);
+        }
 
         private void backgroundWorker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
         {
             if (_hiddenBits >= 0)
             {
-                MessageBox.Show($"Успешно спрятано {_hiddenBits} бит");
                 pictureBox.Image = _bitmap;
                 progressBar.Visible = false;
+                MessageBox.Show($"Успешно спрятано {_hiddenBits} бит");
             }
             else
             {
@@ -118,6 +117,11 @@ namespace InformationSecurity_lab3
         private void cmbbxBits_SelectedIndexChanged(object sender, EventArgs e)
         {
             _lowBits = int.Parse(cmbbxBits.SelectedItem.ToString());
+        }
+
+        private void btnExtractTextFromImage_Click(object sender, EventArgs e)
+        {
+            txtbxInputOutput.Text = Steganography.ExtractTextFromImage(pictureBox.Image as Bitmap, _lowBits, _hiddenBits);
         }
     }
 }

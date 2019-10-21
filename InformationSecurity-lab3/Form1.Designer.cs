@@ -127,6 +127,7 @@
             this.btnExtractTextFromImage.TabIndex = 7;
             this.btnExtractTextFromImage.Text = "Извлечь текст из контейнера";
             this.btnExtractTextFromImage.UseVisualStyleBackColor = true;
+            this.btnExtractTextFromImage.Click += new System.EventHandler(this.btnExtractTextFromImage_Click);
             // 
             // btnSaveTextToFile
             // 
