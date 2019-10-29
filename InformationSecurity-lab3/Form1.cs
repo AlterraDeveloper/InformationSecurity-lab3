@@ -73,7 +73,7 @@ namespace InformationSecurity_lab3
 
                     var a = pictureBox.Image.RawFormat;
                 }
-                catch (ArgumentException exception)
+                catch (ArgumentException)
                 {
                     MessageBox.Show("Файл не является изображением.");
                 }
@@ -134,26 +134,26 @@ namespace InformationSecurity_lab3
 
         private void backgroundWorker_DoWork(object sender, DoWorkEventArgs e)
         {
-            _hiddenBits = Steganography.HideTextIntoImage(txtbxInputOutput.Text, ref _bitmap, _lowBits);
+            _bitmap = Steganography.HideTextIntoImage(txtbxInputOutput.Text,_bitmap, _lowBits);
         }
 
         private void backgroundWorker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
         {
-            if (_hiddenBits > 0)
+            if (_bitmap != null)
             {
                 pictureBox.Image = _bitmap;
                 MessageBox.Show($"Успешно спрятано {_hiddenBits} бит");
             }
             else
             {
-                MessageBox.Show($"Данный текст не помещается в изображение.\nПопробуйте уменьшить длину текста или увеличить количество младших бит.");
+                MessageBox.Show($"Ошибка!\nВозможные причины :\n1) Данный текст не помещается в изображение.\nПопробуйте уменьшить длину текста или увеличить количество младших бит.\n2) Проверьте введенные данные (текст,изображение).");
             }
             progressBar.Visible = false;
         }
 
         private void backgroundWorker1_DoWork(object sender, DoWorkEventArgs e)
         {
-            _extractedText = Steganography.ExtractTextFromImage(_bitmap, _lowBits, _hiddenBits);
+            _extractedText = Steganography.ExtractTextFromImage(_bitmap);
         }
 
         private void backgroundWorker1_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
