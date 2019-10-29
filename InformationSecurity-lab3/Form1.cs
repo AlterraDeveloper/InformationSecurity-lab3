@@ -15,6 +15,10 @@ namespace InformationSecurity_lab3
 {
     public partial class Form1 : Form
     {
+        private int _hiddenBits;
+        private Bitmap _bitmap;
+        private int _lowBits;
+        private string _extractedText;
         public Form1()
         {
             InitializeComponent();
@@ -56,11 +60,26 @@ namespace InformationSecurity_lab3
             {
                 try
                 {
-                    pictureBox.Image = new Bitmap(explorer.FileName);
+                    var image = new Bitmap(explorer.FileName);
+                    if (image.RawFormat.Guid == ImageFormat.Bmp.Guid)
+                    {
+                        pictureBox.Image = image;
+                        _bitmap = image;
+                    }
+                    else
+                    {
+                        throw new BadImageFormatException("Изображение должно быть в формате BMP");
+                    }
+
+                    var a = pictureBox.Image.RawFormat;
                 }
-                catch (ArgumentException)
+                catch (ArgumentException exception)
                 {
-                    MessageBox.Show("Файл не является изображением");
+                    MessageBox.Show("Файл не является изображением.");
+                }
+                catch (BadImageFormatException exception)
+                {
+                    MessageBox.Show(exception.Message);
                 }
             }
         }
@@ -72,28 +91,46 @@ namespace InformationSecurity_lab3
             MessageBox.Show($"Файл {fileName} успешно сохранен");
         }
 
+        private void cmbbxBits_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            _lowBits = int.Parse(cmbbxBits.SelectedItem.ToString());
+        }
+
         private void btnHideTextIntoImage_Click(object sender, EventArgs e)
         {
             _bitmap = pictureBox.Image as Bitmap;
 
-            if (_bitmap != null)
+            if (_bitmap != null & !string.IsNullOrEmpty(txtbxInputOutput.Text))
             {
                 if (backgroundWorker.IsBusy != true)
                 {
                     progressBar.Visible = true;
                     progressBar.MarqueeAnimationSpeed = 30;
-                    backgroundWorker.RunWorkerAsync();
+                    backgroundWorker.RunWorkerAsync(null);
                 }
             }
             else
             {
-                MessageBox.Show("Сначала загрузите изображение");
+                MessageBox.Show("Проверьте введенные данные.\n1. Загрузите изображение...\n2. Введите текст...");
             }
         }
 
-        private int _hiddenBits;
-        private Bitmap _bitmap;
-        private int _lowBits;
+        private void btnExtractTextFromImage_Click(object sender, EventArgs e)
+        {
+            if (_bitmap != null)
+            {
+                if (backgroundWorker1.IsBusy != true)
+                {
+                    progressBar.Visible = true;
+                    progressBar.MarqueeAnimationSpeed = 30;
+                    backgroundWorker1.RunWorkerAsync();
+                }
+            }
+            else
+            {
+                MessageBox.Show("Загрузите изображение");
+            }
+        }
 
         private void backgroundWorker_DoWork(object sender, DoWorkEventArgs e)
         {
@@ -102,26 +139,27 @@ namespace InformationSecurity_lab3
 
         private void backgroundWorker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
         {
-            if (_hiddenBits >= 0)
+            if (_hiddenBits > 0)
             {
                 pictureBox.Image = _bitmap;
-                progressBar.Visible = false;
                 MessageBox.Show($"Успешно спрятано {_hiddenBits} бит");
             }
             else
             {
-                MessageBox.Show($"Ошибка в данных:\n1. Проверьте введенный текст\n2. Проверьте изображение");
+                MessageBox.Show($"Данный текст не помещается в изображение.\nПопробуйте уменьшить длину текста или увеличить количество младших бит.");
             }
+            progressBar.Visible = false;
         }
 
-        private void cmbbxBits_SelectedIndexChanged(object sender, EventArgs e)
+        private void backgroundWorker1_DoWork(object sender, DoWorkEventArgs e)
         {
-            _lowBits = int.Parse(cmbbxBits.SelectedItem.ToString());
+            _extractedText = Steganography.ExtractTextFromImage(_bitmap, _lowBits, _hiddenBits);
         }
 
-        private void btnExtractTextFromImage_Click(object sender, EventArgs e)
+        private void backgroundWorker1_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
         {
-            txtbxInputOutput.Text = Steganography.ExtractTextFromImage(pictureBox.Image as Bitmap, _lowBits, _hiddenBits);
+            txtbxInputOutput.Text = _extractedText;
+            progressBar.Visible = false;
         }
     }
 }

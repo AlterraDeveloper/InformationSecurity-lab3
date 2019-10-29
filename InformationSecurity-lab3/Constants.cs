@@ -10,6 +10,7 @@ namespace InformationSecurity_lab3
     {
         COMPONENTS_IN_PIXEL = 3,
         BYTE_LENGTH = 8,
-        CHAR_LENGTH = 16
+        CHAR_LENGTH = 16,
+        FIRST_BYTE_OF_BMP_FILE = 54
     }
 }
