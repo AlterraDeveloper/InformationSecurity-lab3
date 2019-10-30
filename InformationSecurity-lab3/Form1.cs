@@ -1,29 +1,29 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel;
-using System.Data;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
-using System.Linq;
 using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
 using System.Windows.Forms;
+using System.Linq;
 
 namespace InformationSecurity_lab3
 {
     public partial class Form1 : Form
     {
-        private int _hiddenBits;
+        private IntegrityChecker _integrityChecker;
         private Bitmap _bitmap;
         private int _lowBits;
         private string _extractedText;
+        private bool _isNormalMode;
+        private int _distortedBytes;
         public Form1()
         {
             InitializeComponent();
             cmbbxBits.SelectedItem = cmbbxBits.Items[0];
             progressBar.Visible = false;
+            _isNormalMode = true;
+            _integrityChecker = new IntegrityChecker();
         }
 
         private void btnLoadTextFromFile_Click(object sender, EventArgs e)
@@ -65,13 +65,20 @@ namespace InformationSecurity_lab3
                     {
                         pictureBox.Image = image;
                         _bitmap = image;
+
+                        var imageBytes = (byte[])new ImageConverter().ConvertTo(_bitmap, typeof(byte[]));
+
+                        var result = _integrityChecker.CheckByXOR(imageBytes);
+                        _integrityChecker.ResultXOR = result;
+
+                        var resultOfCyclicCode = _integrityChecker.CheckWithCyclicCodes(imageBytes);
+                        _integrityChecker.ResultOfCyclicCode = resultOfCyclicCode;
+
                     }
                     else
                     {
                         throw new BadImageFormatException("Изображение должно быть в формате BMP");
                     }
-
-                    var a = pictureBox.Image.RawFormat;
                 }
                 catch (ArgumentException)
                 {
@@ -134,7 +141,7 @@ namespace InformationSecurity_lab3
 
         private void backgroundWorker_DoWork(object sender, DoWorkEventArgs e)
         {
-            _bitmap = Steganography.HideTextIntoImage(txtbxInputOutput.Text,_bitmap, _lowBits);
+            _bitmap = Steganography.HideTextIntoImage(txtbxInputOutput.Text, _bitmap, _lowBits);
         }
 
         private void backgroundWorker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
@@ -142,7 +149,15 @@ namespace InformationSecurity_lab3
             if (_bitmap != null)
             {
                 pictureBox.Image = _bitmap;
-                MessageBox.Show($"Успешно спрятано {_hiddenBits} бит");
+                MessageBox.Show($"Текст успешно помещен в контейнер");
+
+                var imageBytes = (byte[])new ImageConverter().ConvertTo(_bitmap, typeof(byte[]));
+
+                var result = _integrityChecker.CheckByXOR(imageBytes);
+                _integrityChecker.ResultXOR = result;
+
+                var resultOfCyclicCode = _integrityChecker.CheckWithCyclicCodes(imageBytes);
+                _integrityChecker.ResultOfCyclicCode = resultOfCyclicCode;
             }
             else
             {
@@ -160,6 +175,102 @@ namespace InformationSecurity_lab3
         {
             txtbxInputOutput.Text = _extractedText;
             progressBar.Visible = false;
+        }
+
+        private void btnDistortImage_Click(object sender, EventArgs e)
+        {
+            _isNormalMode = false;
+            foreach (Control control in Controls)
+            {
+                if (control is PictureBox)
+                {
+                    control.Enabled = true;
+                }
+                else
+                {
+                    control.Enabled = false;
+                }
+            }
+            label2.Text = "Режим искажения изображения, нажмите ESC для выхода";
+            label2.Enabled = true;
+        }
+
+        private void Form1_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (!_isNormalMode & e.KeyCode == Keys.Escape)
+            {
+                foreach (Control control in Controls)
+                {
+                    control.Enabled = true;
+                }
+                label2.Text = string.Empty;
+                MessageBox.Show($"Искажено {_distortedBytes} байт.");
+                _isNormalMode = true;
+                _distortedBytes = 0;
+            }
+        }
+
+        private void pictureBox_MouseMove(object sender, MouseEventArgs e)
+        {
+            if (!_isNormalMode)
+            {
+                try
+                {
+                    Color cursorColor = Color.Green;
+
+                    if (e.Button == MouseButtons.Left)
+                    {
+                        cursorColor = Color.Red;
+
+                    }
+                    else if (e.Button == MouseButtons.Right)
+                    {
+                        cursorColor = Color.Blue;
+                    }
+
+                    _bitmap.SetPixel(e.X, e.Y, cursorColor);
+                    _distortedBytes += (int)Constants.COMPONENTS_IN_PIXEL;
+                    pictureBox.Image = _bitmap;
+                }
+                catch (ArgumentOutOfRangeException)
+                {
+
+                }
+            }
+        }
+
+        private void btnCheckIntegrity_Click(object sender, EventArgs e)
+        {
+            var imageBytes = (byte[])new ImageConverter().ConvertTo(_bitmap, typeof(byte[]));
+
+            if (radioBtnCheckByXOR.Checked)
+            {
+                var result = _integrityChecker.CheckByXOR(imageBytes);
+                if (result == _integrityChecker.ResultXOR)
+                {
+                    MessageBox.Show("Данные целостны", "Отлично");
+                }
+                else
+                {
+                    MessageBox.Show("Информация содержащаяся в контейнере повреждена", "Ошибка");
+                }
+            }
+            else if (radioBtnCheckWithCyclicCodes.Checked)
+            {
+                var result = _integrityChecker.CheckWithCyclicCodes(imageBytes);
+                if (result.SequenceEqual(_integrityChecker.ResultOfCyclicCode))
+                {
+                    MessageBox.Show("Данные целостны", "Отлично");
+                }
+                else
+                {
+                    MessageBox.Show("Информация содержащаяся в контейнере повреждена", "Ошибка");
+                }
+            }
+            else if (radioBtnCheckWithHemmingCode.Checked)
+            {
+
+            }
         }
     }
 }

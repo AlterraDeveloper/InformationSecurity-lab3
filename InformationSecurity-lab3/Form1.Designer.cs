@@ -42,7 +42,14 @@
             this.backgroundWorker = new System.ComponentModel.BackgroundWorker();
             this.progressBar = new System.Windows.Forms.ProgressBar();
             this.backgroundWorker1 = new System.ComponentModel.BackgroundWorker();
+            this.label2 = new System.Windows.Forms.Label();
+            this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.radioBtnCheckByXOR = new System.Windows.Forms.RadioButton();
+            this.radioBtnCheckWithCyclicCodes = new System.Windows.Forms.RadioButton();
+            this.radioBtnCheckWithHemmingCode = new System.Windows.Forms.RadioButton();
+            this.btnCheckIntegrity = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox)).BeginInit();
+            this.groupBox1.SuspendLayout();
             this.SuspendLayout();
             // 
             // txtbxInputOutput
@@ -68,11 +75,13 @@
             // 
             this.pictureBox.BackColor = System.Drawing.SystemColors.Control;
             this.pictureBox.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.pictureBox.ErrorImage = null;
             this.pictureBox.Location = new System.Drawing.Point(13, 135);
             this.pictureBox.Name = "pictureBox";
             this.pictureBox.Size = new System.Drawing.Size(300, 300);
             this.pictureBox.TabIndex = 2;
             this.pictureBox.TabStop = false;
+            this.pictureBox.MouseMove += new System.Windows.Forms.MouseEventHandler(this.pictureBox_MouseMove);
             // 
             // btnLoadImage
             // 
@@ -117,6 +126,7 @@
             this.btnDistortImage.TabIndex = 6;
             this.btnDistortImage.Text = "Испортить изображение";
             this.btnDistortImage.UseVisualStyleBackColor = true;
+            this.btnDistortImage.Click += new System.EventHandler(this.btnDistortImage_Click);
             // 
             // btnExtractTextFromImage
             // 
@@ -176,11 +186,79 @@
             this.backgroundWorker1.DoWork += new System.ComponentModel.DoWorkEventHandler(this.backgroundWorker1_DoWork);
             this.backgroundWorker1.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(this.backgroundWorker1_RunWorkerCompleted);
             // 
+            // label2
+            // 
+            this.label2.AutoSize = true;
+            this.label2.Font = new System.Drawing.Font("Microsoft Sans Serif", 11F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label2.ForeColor = System.Drawing.Color.Red;
+            this.label2.Location = new System.Drawing.Point(333, 421);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(0, 18);
+            this.label2.TabIndex = 12;
+            // 
+            // groupBox1
+            // 
+            this.groupBox1.Controls.Add(this.btnCheckIntegrity);
+            this.groupBox1.Controls.Add(this.radioBtnCheckWithHemmingCode);
+            this.groupBox1.Controls.Add(this.radioBtnCheckWithCyclicCodes);
+            this.groupBox1.Controls.Add(this.radioBtnCheckByXOR);
+            this.groupBox1.Location = new System.Drawing.Point(549, 135);
+            this.groupBox1.Name = "groupBox1";
+            this.groupBox1.Size = new System.Drawing.Size(284, 248);
+            this.groupBox1.TabIndex = 13;
+            this.groupBox1.TabStop = false;
+            this.groupBox1.Text = "Проверка на целостность";
+            // 
+            // radioBtnCheckByXOR
+            // 
+            this.radioBtnCheckByXOR.AutoSize = true;
+            this.radioBtnCheckByXOR.Location = new System.Drawing.Point(23, 29);
+            this.radioBtnCheckByXOR.Name = "radioBtnCheckByXOR";
+            this.radioBtnCheckByXOR.Size = new System.Drawing.Size(116, 17);
+            this.radioBtnCheckByXOR.TabIndex = 0;
+            this.radioBtnCheckByXOR.TabStop = true;
+            this.radioBtnCheckByXOR.Text = "Проверка по XOR";
+            this.radioBtnCheckByXOR.UseVisualStyleBackColor = true;
+            // 
+            // radioBtnCheckWithCyclicCodes
+            // 
+            this.radioBtnCheckWithCyclicCodes.AutoSize = true;
+            this.radioBtnCheckWithCyclicCodes.Location = new System.Drawing.Point(23, 54);
+            this.radioBtnCheckWithCyclicCodes.Name = "radioBtnCheckWithCyclicCodes";
+            this.radioBtnCheckWithCyclicCodes.Size = new System.Drawing.Size(236, 17);
+            this.radioBtnCheckWithCyclicCodes.TabIndex = 1;
+            this.radioBtnCheckWithCyclicCodes.TabStop = true;
+            this.radioBtnCheckWithCyclicCodes.Text = "Проверка с помощью циклических кодов";
+            this.radioBtnCheckWithCyclicCodes.UseVisualStyleBackColor = true;
+            // 
+            // radioBtnCheckWithHemmingCode
+            // 
+            this.radioBtnCheckWithHemmingCode.AutoSize = true;
+            this.radioBtnCheckWithHemmingCode.Location = new System.Drawing.Point(23, 79);
+            this.radioBtnCheckWithHemmingCode.Name = "radioBtnCheckWithHemmingCode";
+            this.radioBtnCheckWithHemmingCode.Size = new System.Drawing.Size(218, 17);
+            this.radioBtnCheckWithHemmingCode.TabIndex = 2;
+            this.radioBtnCheckWithHemmingCode.TabStop = true;
+            this.radioBtnCheckWithHemmingCode.Text = "Проверка с помощью кода Хемминга";
+            this.radioBtnCheckWithHemmingCode.UseVisualStyleBackColor = true;
+            // 
+            // btnCheckIntegrity
+            // 
+            this.btnCheckIntegrity.Location = new System.Drawing.Point(23, 123);
+            this.btnCheckIntegrity.Name = "btnCheckIntegrity";
+            this.btnCheckIntegrity.Size = new System.Drawing.Size(236, 23);
+            this.btnCheckIntegrity.TabIndex = 3;
+            this.btnCheckIntegrity.Text = "Проверить";
+            this.btnCheckIntegrity.UseVisualStyleBackColor = true;
+            this.btnCheckIntegrity.Click += new System.EventHandler(this.btnCheckIntegrity_Click);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(800, 450);
+            this.ClientSize = new System.Drawing.Size(864, 450);
+            this.Controls.Add(this.groupBox1);
+            this.Controls.Add(this.label2);
             this.Controls.Add(this.progressBar);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.btnSaveImage);
@@ -195,7 +273,10 @@
             this.Controls.Add(this.txtbxInputOutput);
             this.Name = "Form1";
             this.Text = "Form1";
+            this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.Form1_KeyDown);
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox)).EndInit();
+            this.groupBox1.ResumeLayout(false);
+            this.groupBox1.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -217,6 +298,12 @@
         private System.ComponentModel.BackgroundWorker backgroundWorker;
         private System.Windows.Forms.ProgressBar progressBar;
         private System.ComponentModel.BackgroundWorker backgroundWorker1;
+        private System.Windows.Forms.Label label2;
+        private System.Windows.Forms.GroupBox groupBox1;
+        private System.Windows.Forms.RadioButton radioBtnCheckWithHemmingCode;
+        private System.Windows.Forms.RadioButton radioBtnCheckWithCyclicCodes;
+        private System.Windows.Forms.RadioButton radioBtnCheckByXOR;
+        private System.Windows.Forms.Button btnCheckIntegrity;
     }
 }
 
