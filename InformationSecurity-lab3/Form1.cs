@@ -11,7 +11,7 @@ namespace InformationSecurity_lab3
 {
     public partial class Form1 : Form
     {
-        private IntegrityChecker _integrityChecker;
+        private readonly IntegrityChecker _integrityChecker;
         private Bitmap _bitmap;
         private int _lowBits;
         private string _extractedText;
@@ -68,12 +68,7 @@ namespace InformationSecurity_lab3
 
                         var imageBytes = (byte[])new ImageConverter().ConvertTo(_bitmap, typeof(byte[]));
 
-                        var result = _integrityChecker.CheckByXOR(imageBytes);
-                        _integrityChecker.ResultXOR = result;
-
-                        var resultOfCyclicCode = _integrityChecker.CheckWithCyclicCodes(imageBytes);
-                        _integrityChecker.ResultOfCyclicCode = resultOfCyclicCode;
-
+                        _integrityChecker.SetMetrics(imageBytes);
                     }
                     else
                     {
@@ -153,11 +148,7 @@ namespace InformationSecurity_lab3
 
                 var imageBytes = (byte[])new ImageConverter().ConvertTo(_bitmap, typeof(byte[]));
 
-                var result = _integrityChecker.CheckByXOR(imageBytes);
-                _integrityChecker.ResultXOR = result;
-
-                var resultOfCyclicCode = _integrityChecker.CheckWithCyclicCodes(imageBytes);
-                _integrityChecker.ResultOfCyclicCode = resultOfCyclicCode;
+                _integrityChecker.SetMetrics(imageBytes);
             }
             else
             {
@@ -246,6 +237,7 @@ namespace InformationSecurity_lab3
             if (radioBtnCheckByXOR.Checked)
             {
                 var result = _integrityChecker.CheckByXOR(imageBytes);
+
                 if (result == _integrityChecker.ResultXOR)
                 {
                     MessageBox.Show("Данные целостны", "Отлично");
@@ -258,7 +250,8 @@ namespace InformationSecurity_lab3
             else if (radioBtnCheckWithCyclicCodes.Checked)
             {
                 var result = _integrityChecker.CheckWithCyclicCodes(imageBytes);
-                if (result.SequenceEqual(_integrityChecker.ResultOfCyclicCode))
+
+                if (result.All(s => s == 0))
                 {
                     MessageBox.Show("Данные целостны", "Отлично");
                 }

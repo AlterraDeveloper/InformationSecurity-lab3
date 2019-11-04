@@ -4,69 +4,116 @@ namespace InformationSecurity_lab3
 {
     class IntegrityChecker
     {
-        public byte ResultXOR { get; set; }
-        public int[] ResultOfCyclicCode { get; set; }
+        public byte ResultXOR { get; private set; }
+
+        public int[] ResultOfCyclicCode { get; private set; }
 
         public byte CheckByXOR(byte[] bytes)
         {
             byte result = 0;
-            for (int i = 0; i < bytes.Length; i++)
+            foreach (var b in bytes)
             {
-                result ^= bytes[i];
+                result ^= b;
             }
             return result;
-        }
-
-        public int[] CheckWithCyclicCodes(byte[] bytes)
-        {
-            var sindroms = new int[bytes.Length / sizeof(int)];
-            int word32bit = 0;
-
-            for (int i = 0,j = 0; i < bytes.Length; i+=sizeof(int),j++)
-            {
-                word32bit |= (bytes[i] << (8 * 3));
-                word32bit |= (bytes[i+1] << (8 * 2));
-                word32bit |= (bytes[i+2] << (8 * 1));
-                word32bit |= (bytes[i+3] << (8 * 0));
-
-                sindroms[j] = GetSindrom(word32bit);
-            }
-
-            return sindroms;
         }
 
         private int GetBinaryNumberLength(int number)
         {
             return Convert.ToString(number, 2).Length;
         }
-        private int GetBinaryNumberLength(long number)
+
+        public int[] GetSindroms(byte[] bytes)
         {
-            return Convert.ToString(number, 2).Length;
+            const int bytePortionLength = (int)Constants.COMPONENTS_IN_PIXEL;
+            var sindroms = new int[bytes.Length / bytePortionLength];
+            var word24Bit = 0;
+
+            for (int i = 0, j = 0; i < bytes.Length; i += bytePortionLength, j++)
+            {
+                word24Bit |= (bytes[i] << (8 * 2));
+                word24Bit |= (bytes[i + 1] << (8 * 1));
+                word24Bit |= (bytes[i + 2] << (8 * 0));
+
+                sindroms[j] = GetSindrom(word24Bit);
+
+            }
+
+            return sindroms;
         }
 
         private int GetSindrom(int _number)
         {
-            long number = _number;
+            var number = _number;
             var sindrom = 0;
-            var polinom = 1165191;
+            const int polinom = 98;
 
             var polinomPower = GetBinaryNumberLength(polinom) - 1;
             number <<= polinomPower;
 
-            var deltaPolinom = polinom;
-            var delta = 0;
             var numberPower = GetBinaryNumberLength(number);
 
             for (; ; )
             {
-                delta = numberPower - (polinomPower + 1);
-                deltaPolinom = polinom << delta;
+                var delta = numberPower - (polinomPower + 1);
+                var deltaPolinom = polinom << delta;
                 number ^= deltaPolinom;
                 numberPower = GetBinaryNumberLength(number);
-                if (numberPower == (polinomPower + 1) || number == 0) break;
+                if (numberPower == polinomPower || number == 0) break;
             }
 
-            if (number != 0) sindrom = (int)(number ^ polinom);
+            if (number != 0) sindrom = number ^ polinom;
+
+            return sindrom;
+        }
+
+        public void SetMetrics(byte[] bytes)
+        {
+            ResultXOR = CheckByXOR(bytes);
+            ResultOfCyclicCode = GetSindroms(bytes);
+        }
+
+        public int[] CheckWithCyclicCodes(byte[] bytes)
+        {
+            const int bytePortionLength = (int)Constants.COMPONENTS_IN_PIXEL;
+            var sindroms = new int[bytes.Length / bytePortionLength];
+            var word24Bit = 0;
+
+            for (int i = 0, j = 0; i < bytes.Length; i += bytePortionLength, j++)
+            {
+                word24Bit |= (bytes[i] << (8 * 2));
+                word24Bit |= (bytes[i + 1] << (8 * 1));
+                word24Bit |= (bytes[i + 2] << (8 * 0));
+
+                sindroms[j] = GetAnotherSindrom(word24Bit,ResultOfCyclicCode[j]);
+
+            }
+
+            return sindroms;
+        }
+
+        private int GetAnotherSindrom(int word24Bit, int _sindrom)
+        {
+            var number = word24Bit;
+            var sindrom = 0;
+            const int polinom = 98;
+
+            var polinomPower = GetBinaryNumberLength(polinom) - 1;
+            number <<= polinomPower;
+            number ^= _sindrom;
+
+            var numberPower = GetBinaryNumberLength(number);
+
+            for (; ; )
+            {
+                var delta = numberPower - (polinomPower + 1);
+                var deltaPolinom = polinom << delta;
+                number ^= deltaPolinom;
+                numberPower = GetBinaryNumberLength(number);
+                if (numberPower == polinomPower || number == 0) break;
+            }
+
+            if (number != 0) sindrom = number ^ polinom;
 
             return sindrom;
         }

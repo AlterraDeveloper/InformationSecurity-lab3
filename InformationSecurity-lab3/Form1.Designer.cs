@@ -44,10 +44,10 @@
             this.backgroundWorker1 = new System.ComponentModel.BackgroundWorker();
             this.label2 = new System.Windows.Forms.Label();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
-            this.radioBtnCheckByXOR = new System.Windows.Forms.RadioButton();
-            this.radioBtnCheckWithCyclicCodes = new System.Windows.Forms.RadioButton();
-            this.radioBtnCheckWithHemmingCode = new System.Windows.Forms.RadioButton();
             this.btnCheckIntegrity = new System.Windows.Forms.Button();
+            this.radioBtnCheckWithHemmingCode = new System.Windows.Forms.RadioButton();
+            this.radioBtnCheckWithCyclicCodes = new System.Windows.Forms.RadioButton();
+            this.radioBtnCheckByXOR = new System.Windows.Forms.RadioButton();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox)).BeginInit();
             this.groupBox1.SuspendLayout();
             this.SuspendLayout();
@@ -209,27 +209,15 @@
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Проверка на целостность";
             // 
-            // radioBtnCheckByXOR
+            // btnCheckIntegrity
             // 
-            this.radioBtnCheckByXOR.AutoSize = true;
-            this.radioBtnCheckByXOR.Location = new System.Drawing.Point(23, 29);
-            this.radioBtnCheckByXOR.Name = "radioBtnCheckByXOR";
-            this.radioBtnCheckByXOR.Size = new System.Drawing.Size(116, 17);
-            this.radioBtnCheckByXOR.TabIndex = 0;
-            this.radioBtnCheckByXOR.TabStop = true;
-            this.radioBtnCheckByXOR.Text = "Проверка по XOR";
-            this.radioBtnCheckByXOR.UseVisualStyleBackColor = true;
-            // 
-            // radioBtnCheckWithCyclicCodes
-            // 
-            this.radioBtnCheckWithCyclicCodes.AutoSize = true;
-            this.radioBtnCheckWithCyclicCodes.Location = new System.Drawing.Point(23, 54);
-            this.radioBtnCheckWithCyclicCodes.Name = "radioBtnCheckWithCyclicCodes";
-            this.radioBtnCheckWithCyclicCodes.Size = new System.Drawing.Size(236, 17);
-            this.radioBtnCheckWithCyclicCodes.TabIndex = 1;
-            this.radioBtnCheckWithCyclicCodes.TabStop = true;
-            this.radioBtnCheckWithCyclicCodes.Text = "Проверка с помощью циклических кодов";
-            this.radioBtnCheckWithCyclicCodes.UseVisualStyleBackColor = true;
+            this.btnCheckIntegrity.Location = new System.Drawing.Point(23, 123);
+            this.btnCheckIntegrity.Name = "btnCheckIntegrity";
+            this.btnCheckIntegrity.Size = new System.Drawing.Size(236, 23);
+            this.btnCheckIntegrity.TabIndex = 3;
+            this.btnCheckIntegrity.Text = "Проверить";
+            this.btnCheckIntegrity.UseVisualStyleBackColor = true;
+            this.btnCheckIntegrity.Click += new System.EventHandler(this.btnCheckIntegrity_Click);
             // 
             // radioBtnCheckWithHemmingCode
             // 
@@ -242,15 +230,27 @@
             this.radioBtnCheckWithHemmingCode.Text = "Проверка с помощью кода Хемминга";
             this.radioBtnCheckWithHemmingCode.UseVisualStyleBackColor = true;
             // 
-            // btnCheckIntegrity
+            // radioBtnCheckWithCyclicCodes
             // 
-            this.btnCheckIntegrity.Location = new System.Drawing.Point(23, 123);
-            this.btnCheckIntegrity.Name = "btnCheckIntegrity";
-            this.btnCheckIntegrity.Size = new System.Drawing.Size(236, 23);
-            this.btnCheckIntegrity.TabIndex = 3;
-            this.btnCheckIntegrity.Text = "Проверить";
-            this.btnCheckIntegrity.UseVisualStyleBackColor = true;
-            this.btnCheckIntegrity.Click += new System.EventHandler(this.btnCheckIntegrity_Click);
+            this.radioBtnCheckWithCyclicCodes.AutoSize = true;
+            this.radioBtnCheckWithCyclicCodes.Location = new System.Drawing.Point(23, 54);
+            this.radioBtnCheckWithCyclicCodes.Name = "radioBtnCheckWithCyclicCodes";
+            this.radioBtnCheckWithCyclicCodes.Size = new System.Drawing.Size(236, 17);
+            this.radioBtnCheckWithCyclicCodes.TabIndex = 1;
+            this.radioBtnCheckWithCyclicCodes.TabStop = true;
+            this.radioBtnCheckWithCyclicCodes.Text = "Проверка с помощью циклических кодов";
+            this.radioBtnCheckWithCyclicCodes.UseVisualStyleBackColor = true;
+            // 
+            // radioBtnCheckByXOR
+            // 
+            this.radioBtnCheckByXOR.AutoSize = true;
+            this.radioBtnCheckByXOR.Location = new System.Drawing.Point(23, 29);
+            this.radioBtnCheckByXOR.Name = "radioBtnCheckByXOR";
+            this.radioBtnCheckByXOR.Size = new System.Drawing.Size(116, 17);
+            this.radioBtnCheckByXOR.TabIndex = 0;
+            this.radioBtnCheckByXOR.TabStop = true;
+            this.radioBtnCheckByXOR.Text = "Проверка по XOR";
+            this.radioBtnCheckByXOR.UseVisualStyleBackColor = true;
             // 
             // Form1
             // 
