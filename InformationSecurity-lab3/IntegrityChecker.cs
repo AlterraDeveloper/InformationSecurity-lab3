@@ -24,54 +24,35 @@ namespace InformationSecurity_lab3
             return Convert.ToString(number, 2).Length;
         }
 
-        private int[] CalculateSindroms(byte[] bytes)
-        {
-            const int bytePortionLength = (int)Constants.COMPONENTS_IN_PIXEL;
-            var sindroms = new int[bytes.Length / bytePortionLength];
-            var word24Bit = 0;
-
-            for (int i = 0, j = 0; i < bytes.Length; i += bytePortionLength, j++)
-            {
-                word24Bit |= (bytes[i] << (8 * 2));
-                word24Bit |= (bytes[i + 1] << (8 * 1));
-                word24Bit |= (bytes[i + 2] << (8 * 0));
-
-                sindroms[j] = GetSindrom(word24Bit);
-                word24Bit = 0;
-            }
-            return sindroms;
-        }
-
         private int GetSindrom(int _number)
         {
             var number = _number;
             var sindrom = 0;
-            const int polinom = 98;
+            const int polinom = 11;
 
             var polinomPower = GetBinaryNumberLength(polinom) - 1;
             number <<= polinomPower;
 
             var numberPower = GetBinaryNumberLength(number);
 
-            for (; ; )
+            for (; numberPower - 1 < polinomPower;)
             {
                 var delta = numberPower - (polinomPower + 1);
                 var deltaPolinom = polinom << delta;
                 number ^= deltaPolinom;
                 numberPower = GetBinaryNumberLength(number);
-                if (numberPower == polinomPower || number == 0) break;
             }
+            return number;
+            //if (number != 0) sindrom = number ^ polinom;
 
-            if (number != 0) sindrom = number ^ polinom;
-
-            return sindrom;
-        }      
+            //return sindrom;
+        }
 
         private int GetAnotherSindrom(int word24Bit, int _sindrom)
         {
             var number = word24Bit;
             var sindrom = 0;
-            const int polinom = 98;
+            const int polinom = 11;
 
             var polinomPower = GetBinaryNumberLength(polinom) - 1;
             number <<= polinomPower;
@@ -79,24 +60,23 @@ namespace InformationSecurity_lab3
 
             var numberPower = GetBinaryNumberLength(number);
 
-            for (; ; )
+            for (;numberPower - 1 < polinomPower;)
             {
                 var delta = numberPower - (polinomPower + 1);
                 var deltaPolinom = polinom << delta;
                 number ^= deltaPolinom;
                 numberPower = GetBinaryNumberLength(number);
-                if (numberPower == polinomPower || number == 0) break;
             }
+            return number;
+            //if (number != 0) sindrom = number ^ polinom;
 
-            if (number != 0) sindrom = number ^ polinom;
-
-            return sindrom;
+            //return sindrom;
         }
 
         public void SetMetrics(byte[] bytes)
         {
             ResultXOR = CalculateCheckByXOR(bytes);
-            ResultOfCyclicCode =  CalculateSindroms(bytes);
+            ResultOfCyclicCode = CalculateSindroms(bytes);
         }
 
         public bool CheckByXOR(byte[] bytes)
@@ -113,15 +93,33 @@ namespace InformationSecurity_lab3
 
             for (int i = 0, j = 0; i < bytes.Length; i += bytePortionLength, j++)
             {
-                word24Bit |= (bytes[i] << (8 * 2));
-                word24Bit |= (bytes[i + 1] << (8 * 1));
-                word24Bit |= (bytes[i + 2] << (8 * 0));
+                word24Bit ^= bytes[i];
+                word24Bit ^= bytes[i+1];
+                word24Bit ^= bytes[i+2];
 
                 sindroms[j] = GetAnotherSindrom(word24Bit, ResultOfCyclicCode[j]);
                 word24Bit = 0;
             }
 
             return sindroms.All(s => s == 0);
+        }
+
+        private int[] CalculateSindroms(byte[] bytes)
+        {
+            const int bytePortionLength = (int)Constants.COMPONENTS_IN_PIXEL;
+            var sindroms = new int[bytes.Length / bytePortionLength];
+            var word24Bit = 0;
+
+            for (int i = 0, j = 0; i < bytes.Length; i += bytePortionLength, j++)
+            {
+                word24Bit ^= bytes[i];
+                word24Bit ^= bytes[i + 1];
+                word24Bit ^= bytes[i + 2];
+
+                sindroms[j] = GetSindrom(word24Bit);
+                word24Bit = 0;
+            }
+            return sindroms;
         }
     }
 }
