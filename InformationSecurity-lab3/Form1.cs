@@ -236,9 +236,8 @@ namespace InformationSecurity_lab3
 
             if (radioBtnCheckByXOR.Checked)
             {
-                var result = _integrityChecker.CheckByXOR(imageBytes);
 
-                if (result == _integrityChecker.ResultXOR)
+                if (_integrityChecker.CheckByXOR(imageBytes))
                 {
                     MessageBox.Show("Данные целостны", "Отлично");
                 }
@@ -249,9 +248,7 @@ namespace InformationSecurity_lab3
             }
             else if (radioBtnCheckWithCyclicCodes.Checked)
             {
-                var result = _integrityChecker.CheckWithCyclicCodes(imageBytes);
-
-                if (result.All(s => s == 0))
+                if (_integrityChecker.CheckWithCyclicCodes(imageBytes))
                 {
                     MessageBox.Show("Данные целостны", "Отлично");
                 }

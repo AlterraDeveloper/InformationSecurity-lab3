@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 
 namespace InformationSecurity_lab3
 {
@@ -8,14 +9,14 @@ namespace InformationSecurity_lab3
 
         public int[] ResultOfCyclicCode { get; private set; }
 
-        public byte CheckByXOR(byte[] bytes)
+        private byte CalculateCheckByXOR(byte[] bytes)
         {
-            byte result = 0;
+            byte resultXOR = 0;
             foreach (var b in bytes)
             {
-                result ^= b;
+                resultXOR ^= b;
             }
-            return result;
+            return resultXOR;
         }
 
         private int GetBinaryNumberLength(int number)
@@ -23,7 +24,7 @@ namespace InformationSecurity_lab3
             return Convert.ToString(number, 2).Length;
         }
 
-        public int[] GetSindroms(byte[] bytes)
+        private int[] CalculateSindroms(byte[] bytes)
         {
             const int bytePortionLength = (int)Constants.COMPONENTS_IN_PIXEL;
             var sindroms = new int[bytes.Length / bytePortionLength];
@@ -36,9 +37,8 @@ namespace InformationSecurity_lab3
                 word24Bit |= (bytes[i + 2] << (8 * 0));
 
                 sindroms[j] = GetSindrom(word24Bit);
-
+                word24Bit = 0;
             }
-
             return sindroms;
         }
 
@@ -65,32 +65,7 @@ namespace InformationSecurity_lab3
             if (number != 0) sindrom = number ^ polinom;
 
             return sindrom;
-        }
-
-        public void SetMetrics(byte[] bytes)
-        {
-            ResultXOR = CheckByXOR(bytes);
-            ResultOfCyclicCode = GetSindroms(bytes);
-        }
-
-        public int[] CheckWithCyclicCodes(byte[] bytes)
-        {
-            const int bytePortionLength = (int)Constants.COMPONENTS_IN_PIXEL;
-            var sindroms = new int[bytes.Length / bytePortionLength];
-            var word24Bit = 0;
-
-            for (int i = 0, j = 0; i < bytes.Length; i += bytePortionLength, j++)
-            {
-                word24Bit |= (bytes[i] << (8 * 2));
-                word24Bit |= (bytes[i + 1] << (8 * 1));
-                word24Bit |= (bytes[i + 2] << (8 * 0));
-
-                sindroms[j] = GetAnotherSindrom(word24Bit,ResultOfCyclicCode[j]);
-
-            }
-
-            return sindroms;
-        }
+        }      
 
         private int GetAnotherSindrom(int word24Bit, int _sindrom)
         {
@@ -116,6 +91,37 @@ namespace InformationSecurity_lab3
             if (number != 0) sindrom = number ^ polinom;
 
             return sindrom;
+        }
+
+        public void SetMetrics(byte[] bytes)
+        {
+            ResultXOR = CalculateCheckByXOR(bytes);
+            ResultOfCyclicCode =  CalculateSindroms(bytes);
+        }
+
+        public bool CheckByXOR(byte[] bytes)
+        {
+            var result = CalculateCheckByXOR(bytes);
+            return result == ResultXOR;
+        }
+
+        public bool CheckWithCyclicCodes(byte[] bytes)
+        {
+            const int bytePortionLength = (int)Constants.COMPONENTS_IN_PIXEL;
+            var sindroms = new int[bytes.Length / bytePortionLength];
+            var word24Bit = 0;
+
+            for (int i = 0, j = 0; i < bytes.Length; i += bytePortionLength, j++)
+            {
+                word24Bit |= (bytes[i] << (8 * 2));
+                word24Bit |= (bytes[i + 1] << (8 * 1));
+                word24Bit |= (bytes[i + 2] << (8 * 0));
+
+                sindroms[j] = GetAnotherSindrom(word24Bit, ResultOfCyclicCode[j]);
+                word24Bit = 0;
+            }
+
+            return sindroms.All(s => s == 0);
         }
     }
 }
