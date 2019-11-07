@@ -6,6 +6,7 @@ using System.IO;
 using System.Text;
 using System.Windows.Forms;
 using System.Linq;
+using System.Runtime.InteropServices;
 
 namespace InformationSecurity_lab3
 {

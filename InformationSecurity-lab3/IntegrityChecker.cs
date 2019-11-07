@@ -12,6 +12,7 @@ namespace InformationSecurity_lab3
         private byte CalculateCheckByXOR(byte[] bytes)
         {
             byte resultXOR = 0;
+
             foreach (var b in bytes)
             {
                 resultXOR ^= b;
@@ -27,6 +28,7 @@ namespace InformationSecurity_lab3
         private int GetSindrom(int _number)
         {
             var number = _number;
+
             var sindrom = 0;
             const int polinom = 11;
 
@@ -35,7 +37,7 @@ namespace InformationSecurity_lab3
 
             var numberPower = GetBinaryNumberLength(number);
 
-            for (; numberPower - 1 < polinomPower;)
+            for (; numberPower - 1 >= polinomPower;)
             {
                 var delta = numberPower - (polinomPower + 1);
                 var deltaPolinom = polinom << delta;
@@ -43,14 +45,12 @@ namespace InformationSecurity_lab3
                 numberPower = GetBinaryNumberLength(number);
             }
             return number;
-            //if (number != 0) sindrom = number ^ polinom;
-
-            //return sindrom;
         }
 
         private int GetAnotherSindrom(int word24Bit, int _sindrom)
         {
             var number = word24Bit;
+
             var sindrom = 0;
             const int polinom = 11;
 
@@ -60,7 +60,7 @@ namespace InformationSecurity_lab3
 
             var numberPower = GetBinaryNumberLength(number);
 
-            for (;numberPower - 1 < polinomPower;)
+            for (;numberPower - 1 >= polinomPower;)
             {
                 var delta = numberPower - (polinomPower + 1);
                 var deltaPolinom = polinom << delta;
@@ -68,9 +68,6 @@ namespace InformationSecurity_lab3
                 numberPower = GetBinaryNumberLength(number);
             }
             return number;
-            //if (number != 0) sindrom = number ^ polinom;
-
-            //return sindrom;
         }
 
         public void SetMetrics(byte[] bytes)
