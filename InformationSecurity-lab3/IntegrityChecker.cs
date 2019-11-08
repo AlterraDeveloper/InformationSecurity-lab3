@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using System.Text;
 
 namespace InformationSecurity_lab3
 {
@@ -8,6 +9,8 @@ namespace InformationSecurity_lab3
         public byte ResultXOR { get; private set; }
 
         public int[] ResultOfCyclicCode { get; private set; }
+
+        public string[] ResultOfHemmingCode { get; private set; }
 
         private byte CalculateCheckByXOR(byte[] bytes)
         {
@@ -60,7 +63,7 @@ namespace InformationSecurity_lab3
 
             var numberPower = GetBinaryNumberLength(number);
 
-            for (;numberPower - 1 >= polinomPower;)
+            for (; numberPower - 1 >= polinomPower;)
             {
                 var delta = numberPower - (polinomPower + 1);
                 var deltaPolinom = polinom << delta;
@@ -74,6 +77,23 @@ namespace InformationSecurity_lab3
         {
             ResultXOR = CalculateCheckByXOR(bytes);
             ResultOfCyclicCode = CalculateSindroms(bytes);
+            ResultOfHemmingCode = CalculateHemmingCodes(bytes);
+        }
+
+        private string[] CalculateHemmingCodes(byte[] bytes)
+        {
+            var resultOfHemmingCode = new string[bytes.Length / 2];
+
+            for (int i = 0, j = 0; i < bytes.Length; i += 2, j++)
+            {
+                var word = "";
+                word += Convert.ToString(bytes[i], 2).PadLeft(8, '0');
+                word += Convert.ToString(bytes[i + 1], 2).PadLeft(8, '0');
+
+                resultOfHemmingCode[j] = GetHemmingCode(word);
+            }
+
+            return resultOfHemmingCode;
         }
 
         public bool CheckByXOR(byte[] bytes)
@@ -91,8 +111,8 @@ namespace InformationSecurity_lab3
             for (int i = 0, j = 0; i < bytes.Length; i += bytePortionLength, j++)
             {
                 word24Bit ^= bytes[i];
-                word24Bit ^= bytes[i+1];
-                word24Bit ^= bytes[i+2];
+                word24Bit ^= bytes[i + 1];
+                word24Bit ^= bytes[i + 2];
 
                 sindroms[j] = GetAnotherSindrom(word24Bit, ResultOfCyclicCode[j]);
                 word24Bit = 0;
@@ -117,6 +137,58 @@ namespace InformationSecurity_lab3
                 word24Bit = 0;
             }
             return sindroms;
+        }
+
+        public bool CheckWithHemmingCode(byte[] bytes)
+        {
+            var checkResult = true;
+
+            for (int i = 0, j = 0; i < bytes.Length; i += 2, j++)
+            {
+                var word = "";
+                word += Convert.ToString(bytes[i], 2).PadLeft(8, '0');
+                word += Convert.ToString(bytes[i + 1], 2).PadLeft(8, '0');
+
+                checkResult &= GetHemmingCode(word).Equals(ResultOfHemmingCode[j]);
+            }
+
+            return checkResult;
+        }
+
+        private string GetHemmingCode(string word)
+        {
+            var builder = new StringBuilder();
+
+            var controlBitsPositions = new [] {0, 1, 3, 7, 15};
+
+            var resultStr = "";
+
+            //extend word (+5 bit)
+            for (int i = 0; i < 21; i++)
+            {
+                if (controlBitsPositions.Contains(i)) builder.Append('0');
+                else
+                {
+                    builder.Append(word[0]);
+                    word = word.Remove(0, 1);
+                }
+            }
+
+            word = builder.ToString();
+
+            for (int i = 0; i < 5; i++)
+            {
+                var k = (int)Math.Pow(2, i);
+                var tmp = string.Empty;
+                for (int j = k - 1; j < word.Length; j += 2 * k)
+                {
+                    tmp += word.Substring(j, Math.Min(k, word.Length - j));
+                }
+
+                resultStr += tmp.Count(c => c == '1') % 2== 0 ? "0" : "1";
+            }
+
+            return resultStr;
         }
     }
 }

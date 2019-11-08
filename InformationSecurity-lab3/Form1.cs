@@ -5,8 +5,6 @@ using System.Drawing.Imaging;
 using System.IO;
 using System.Text;
 using System.Windows.Forms;
-using System.Linq;
-using System.Runtime.InteropServices;
 
 namespace InformationSecurity_lab3
 {
@@ -260,7 +258,14 @@ namespace InformationSecurity_lab3
             }
             else if (radioBtnCheckWithHemmingCode.Checked)
             {
-
+                if (_integrityChecker.CheckWithHemmingCode(imageBytes))
+                {
+                    MessageBox.Show("Данные целостны", "Отлично");
+                }
+                else
+                {
+                    MessageBox.Show("Информация содержащаяся в контейнере повреждена", "Ошибка");
+                }
             }
         }
     }

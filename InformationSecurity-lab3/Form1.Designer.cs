@@ -48,6 +48,8 @@
             this.radioBtnCheckWithHemmingCode = new System.Windows.Forms.RadioButton();
             this.radioBtnCheckWithCyclicCodes = new System.Windows.Forms.RadioButton();
             this.radioBtnCheckByXOR = new System.Windows.Forms.RadioButton();
+            this.label3 = new System.Windows.Forms.Label();
+            this.label4 = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox)).BeginInit();
             this.groupBox1.SuspendLayout();
             this.SuspendLayout();
@@ -198,6 +200,8 @@
             // 
             // groupBox1
             // 
+            this.groupBox1.Controls.Add(this.label4);
+            this.groupBox1.Controls.Add(this.label3);
             this.groupBox1.Controls.Add(this.btnCheckIntegrity);
             this.groupBox1.Controls.Add(this.radioBtnCheckWithHemmingCode);
             this.groupBox1.Controls.Add(this.radioBtnCheckWithCyclicCodes);
@@ -224,10 +228,10 @@
             this.radioBtnCheckWithHemmingCode.AutoSize = true;
             this.radioBtnCheckWithHemmingCode.Location = new System.Drawing.Point(23, 79);
             this.radioBtnCheckWithHemmingCode.Name = "radioBtnCheckWithHemmingCode";
-            this.radioBtnCheckWithHemmingCode.Size = new System.Drawing.Size(218, 17);
+            this.radioBtnCheckWithHemmingCode.Size = new System.Drawing.Size(222, 17);
             this.radioBtnCheckWithHemmingCode.TabIndex = 2;
             this.radioBtnCheckWithHemmingCode.TabStop = true;
-            this.radioBtnCheckWithHemmingCode.Text = "Проверка с помощью кода Хемминга";
+            this.radioBtnCheckWithHemmingCode.Text = "*Проверка с помощью кода Хемминга";
             this.radioBtnCheckWithHemmingCode.UseVisualStyleBackColor = true;
             // 
             // radioBtnCheckWithCyclicCodes
@@ -251,6 +255,24 @@
             this.radioBtnCheckByXOR.TabStop = true;
             this.radioBtnCheckByXOR.Text = "Проверка по XOR";
             this.radioBtnCheckByXOR.UseVisualStyleBackColor = true;
+            // 
+            // label3
+            // 
+            this.label3.AutoSize = true;
+            this.label3.Location = new System.Drawing.Point(20, 166);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(180, 13);
+            this.label3.TabIndex = 4;
+            this.label3.Text = "*Данный метод помимо проверки";
+            // 
+            // label4
+            // 
+            this.label4.AutoSize = true;
+            this.label4.Location = new System.Drawing.Point(23, 183);
+            this.label4.Name = "label4";
+            this.label4.Size = new System.Drawing.Size(238, 13);
+            this.label4.TabIndex = 5;
+            this.label4.Text = "на целостность  исправит одиночные ошибки";
             // 
             // Form1
             // 
@@ -304,6 +326,8 @@
         private System.Windows.Forms.RadioButton radioBtnCheckWithCyclicCodes;
         private System.Windows.Forms.RadioButton radioBtnCheckByXOR;
         private System.Windows.Forms.Button btnCheckIntegrity;
+        private System.Windows.Forms.Label label4;
+        private System.Windows.Forms.Label label3;
     }
 }
 
